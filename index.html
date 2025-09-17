@@ -30,14 +30,6 @@
         <p class="text-xl text-white opacity-90" id="headerDesc">สร้างเนื้อเพลงสุดเจ๋งด้วย AI</p>
     </div>
 
-    <!-- Language Selector -->
-    <div class="text-center mb-8">
-        <label class="text-white font-medium mr-2">เลือกภาษา:</label>
-        <select id="languageSelect" class="px-3 py-2 rounded-lg bg-white/20 text-white" onchange="changeLanguage()">
-            <option value="th">ไทย</option>
-            <option value="en">English</option>
-        </select>
-    </div>
 
     <div class="max-w-4xl mx-auto">
         <div class="grid md:grid-cols-2 gap-8">
@@ -56,6 +48,15 @@
                             class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/70 border border-white/30 focus:border-white/60 focus:outline-none">
                     </div>
 
+                     <div class="text-center mb-8">
+                     <label class="text-white font-medium mr-2">เลือกภาษา:</label>
+                     <select id="languageSelect" class="px-3 py-2 rounded-lg bg-white/20 text-white" onchange="changeLanguage()">
+                     <option value="th">ไทย</option>
+                     <option value="en">English</option>
+                     </select>
+                
+                </div>
+                    
                     <div>
                         <label class="block text-white font-medium mb-2" id="labelGenre">แนวเพลง</label>
                         <select id="genre" class="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-white/60 focus:outline-none">
@@ -178,3 +179,4 @@ function changeLanguage() {
 
 </body>
 </html>
+
