@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Lyric Maker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Kanit', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .lyric-line {
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .music-note {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="flex justify-center items-center mb-4">
+                <div class="music-note text-6xl mr-4">🎵</div>
+                <h1 class="text-5xl font-bold text-white">AI Lyric Maker</h1>
+                <div class="music-note text-6xl ml-4">🎶</div>
+            </div>
+            <p class="text-xl text-white opacity-90">สร้างเนื้อเพลงสุดเจ๋งด้วย AI</p>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Input Section -->
+                <div class="glass-effect rounded-2xl p-8">
+                    <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+                        <span class="mr-3">✨</span>
+                        ตั้งค่าเพลงของคุณ
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-white font-medium mb-2">หัวข้อเพลง</label>
+                            <input type="text" id="songTopic" placeholder="เช่น ความรัก, มิตรภาพ, ความฝัน..." 
+                                   class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/70 border border-white/30 focus:border-white/60 focus:outline-none">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-white font-medium mb-2">แนวเพลง</label>
+                            <select id="genre" class="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-white/60 focus:outline-none">
+                                <option value="pop">Pop</option>
+                                <option value="rock">Rock</option>
+                                <option value="ballad">Ballad</option>
+                                <option value="rap">Rap</option>
+                                <option value="country">Country</option>
+                                <option value="jazz">Jazz</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-white font-medium mb-2">อารมณ์ของเพลง</label>
+                            <select id="mood" class="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-white/60 focus:outline-none">
+                                <option value="happy">มีความสุข</option>
+                                <option value="sad">เศร้า</option>
+                                <option value="romantic">โรแมนติก</option>
+                                <option value="energetic">มีพลัง</option>
+                                <option value="peaceful">สงบ</option>
+                                <option value="nostalgic">คิดถึง</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-white font-medium mb-2">คำสำคัญ (ไม่บังคับ)</label>
+                            <input type="text" id="keywords" placeholder="เช่น ดวงดาว, ทะเล, ฝัน..." 
+                                   class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/70 border border-white/30 focus:border-white/60 focus:outline-none">
+                        </div>
+                        
+                        <button onclick="generateLyrics()" 
+                                class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold py-4 px-6 rounded-lg hover:from-pink-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                            🎤 สร้างเนื้อเพลง
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Output Section -->
+                <div class="glass-effect rounded-2xl p-8">
+                    <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+                        <span class="mr-3">🎼</span>
+                        เนื้อเพลงของคุณ
+                    </h2>
+                    
+                    <div id="lyricsOutput" class="min-h-96 bg-white/10 rounded-lg p-6 text-white">
+                        <div class="text-center text-white/60 py-20">
+                            <div class="text-6xl mb-4">🎵</div>
+                            <p class="text-lg">กรอกข้อมูลและกดสร้างเนื้อเพลงเพื่อเริ่มต้น</p>
+                        </div>
+                    </div>
+                    
+                    <div id="actionButtons" class="mt-6 space-y-3 hidden">
+                        <button onclick="copyLyrics()" 
+                                class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200">
+                            📋 คัดลอกเนื้อเพลง
+                        </button>
+                        <button onclick="generateNewLyrics()" 
+                                class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200">
+                            🔄 สร้างเวอร์ชันใหม่
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const lyricTemplates = {
+            pop: {
+                happy: [
+                    "วันนี้ฉันรู้สึกดี\nแสงแดดส่องใสใน{topic}\nทุกอย่างดูสวยงาม\nเหมือน{keywords}ในฝัน",
+                    "เมื่อ{topic}มาถึง\nหัวใจเต้นแรง\nความสุขล้นเหลือ\nเหมือน{keywords}ที่ส่าย"
+                ],
+                sad: [
+                    "เมื่อ{topic}จากไป\nใจฉันเศร้าใส\nเหลือแต่ความทรงจำ\nกับ{keywords}ที่เหงา",
+                    "ฝนตกในใจฉัน\nเพราะ{topic}ไม่มี\nเหลือแต่{keywords}\nที่เฝ้ารอคอย"
+                ],
+                romantic: [
+                    "เมื่อได้พบ{topic}\nหัวใจเต้นแรง\nเหมือน{keywords}ในคืน\nที่ส่องแสงใส",
+                    "รักของเรานั้น\nเหมือน{topic}งาม\nดั่ง{keywords}ที่ส่าย\nในสายลมเย็น"
+                ]
+            },
+            rock: {
+                energetic: [
+                    "เราจะสู้ไป\nเพื่อ{topic}ที่รัก\nไม่มีอะไรหยุดเรา\nเหมือน{keywords}ที่แกว่ง",
+                    "ลุกขึ้นมาสู้\n{topic}รออยู่\nพลังในใจเรา\nเหมือน{keywords}ที่เผา"
+                ]
+            },
+            ballad: {
+                sad: [
+                    "ในคืนเหงา\nฉันนึกถึง{topic}\nน้ำตาไหลลง\nเหมือน{keywords}ที่โซ่",
+                    "เมื่อ{topic}ไกล\nใจฉันเศร้าใส\nเหลือแต่ความคิดถึง\nกับ{keywords}เดียวดาย"
+                ],
+                romantic: [
+                    "ใต้แสง{keywords}\nเราสองคนยืน\nมือเธอในมือฉัน\n{topic}ที่แสนหวาน",
+                    "เมื่อ{topic}มาถึง\nหัวใจเราเต้น\nเหมือน{keywords}ที่ร้อง\nเพลงรักนิรันดร์"
+                ]
+            }
+        };
+
+        function generateLyrics() {
+            const topic = document.getElementById('songTopic').value || 'ความรัก';
+            const genre = document.getElementById('genre').value;
+            const mood = document.getElementById('mood').value;
+            const keywords = document.getElementById('keywords').value || 'ดาว';
+            
+            const output = document.getElementById('lyricsOutput');
+            const actionButtons = document.getElementById('actionButtons');
+            
+            // Show loading
+            output.innerHTML = `
+                <div class="text-center py-20">
+                    <div class="animate-spin text-4xl mb-4">🎵</div>
+                    <p class="text-lg">กำลังสร้างเนื้อเพลง...</p>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                let template = lyricTemplates[genre]?.[mood] || lyricTemplates.pop.happy;
+                let selectedTemplate = template[Math.floor(Math.random() * template.length)];
+                
+                // Replace placeholders
+                let lyrics = selectedTemplate
+                    .replace(/{topic}/g, topic)
+                    .replace(/{keywords}/g, keywords);
+                
+                // Add more verses
+                const additionalVerses = [
+                    `\n\n[Chorus]\nเพลงนี้เพื่อ${topic}\nที่อยู่ในใจ\nเหมือน${keywords}ส่าย\nในสายลมใส`,
+                    `\n\n[Bridge]\nไม่ว่าจะเป็นอย่างไร\n${topic}ยังอยู่\nในหัวใจเรา\nเหมือน${keywords}นิรันดร์`,
+                    `\n\n[Outro]\nเพลงนี้จบลง\nแต่${topic}ยังคง\nอยู่ในใจเรา\nเหมือน${keywords}ที่ส่าย`
+                ];
+                
+                lyrics += additionalVerses.join('');
+                
+                // Display lyrics with animation
+                const lines = lyrics.split('\n');
+                output.innerHTML = '';
+                
+                lines.forEach((line, index) => {
+                    setTimeout(() => {
+                        const lineDiv = document.createElement('div');
+                        lineDiv.className = 'lyric-line mb-2 text-lg leading-relaxed';
+                        lineDiv.style.animationDelay = `${index * 0.1}s`;
+                        
+                        if (line.startsWith('[') && line.endsWith(']')) {
+                            lineDiv.className += ' font-bold text-yellow-300 text-xl mt-4';
+                        }
+                        
+                        lineDiv.textContent = line;
+                        output.appendChild(lineDiv);
+                    }, index * 100);
+                });
+                
+                // Show action buttons
+                setTimeout(() => {
+                    actionButtons.classList.remove('hidden');
+                }, lines.length * 100 + 500);
+                
+            }, 2000);
+        }
+        
+        function copyLyrics() {
+            const output = document.getElementById('lyricsOutput');
+            const text = output.innerText;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Show success message
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '✅ คัดลอกแล้ว!';
+                button.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('bg-green-600');
+                }, 2000);
+            });
+        }
+        
+        function generateNewLyrics() {
+            generateLyrics();
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98070950a1d48960',t:'MTc1ODA5NTY3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
